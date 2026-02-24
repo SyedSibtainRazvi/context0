@@ -55,6 +55,9 @@ switch completions fish > ~/.config/fish/completions/switch.fish
 
 # Start the MCP stdio server
 switch mcp-server
+
+# Install agent rule files into the current project (one-time per project)
+switch init-rules
 ```
 
 All commands auto-detect `repo`, `branch`, and `commit` from git. Use `--repo` and `--branch` to override.
@@ -84,7 +87,29 @@ Then visit `http://localhost:8080`.
 | `save_context` | Save a new checkpoint |
 | `list_context` | List recent checkpoints |
 
-This lets Claude Code and Cursor call `switch` natively — no manual terminal commands.
+This lets Claude Code, Cursor, and Codex call `switch` natively — no manual terminal commands.
+
+### Agent-driven workflow (recommended)
+
+With MCP configured and rule files in place, the AI agent saves and resumes context for you automatically.
+
+**Step 1 — install rule files** (run once per project):
+
+```bash
+cd your-project
+switch init-rules
+```
+
+This writes the right file to the right place for each tool:
+- `CLAUDE.md` — Claude Code
+- `.cursor/rules/switch.mdc` — Cursor
+- `AGENTS.md` — Codex
+
+Idempotent: safe to re-run, won't duplicate.
+
+**Step 2 — configure MCP** for your tool (see Claude Code / Cursor below).
+
+**That's it.** On session start the agent calls `get_context` and resumes. When you say "save context" or "I'm switching", the agent calls `save_context` with a full summary. No manual CLI needed.
 
 ### Claude Code
 
