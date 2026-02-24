@@ -409,7 +409,7 @@ fn mcp_tools() -> Value {
     json!([
         {
             "name": "get_context",
-            "description": "Return the latest checkpoint for repo_path + branch.",
+            "description": "Get the latest checkpoint for this repo + branch. Read the returned checkpoint carefully — it was written by a previous AI session and contains the task state you should resume from.",
             "inputSchema": {
                 "type": "object",
                 "additionalProperties": false,
@@ -422,7 +422,7 @@ fn mcp_tools() -> Value {
         },
         {
             "name": "save_context",
-            "description": "Save a checkpoint for repo_path + branch. At least one of done_text, next_text, blockers_text, tests_text, or files must be provided.",
+            "description": "Save a checkpoint when the user ends a session or switches tools. Include: what was accomplished (done_text), what should happen next (next_text), any blockers (blockers_text), test status (tests_text), and key files touched (files). Be specific and concise — another AI agent will read this to resume the work. At least one of done_text, next_text, blockers_text, tests_text, or files is required.",
             "inputSchema": {
                 "type": "object",
                 "additionalProperties": false,

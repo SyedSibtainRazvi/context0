@@ -5,7 +5,9 @@ mod mcp;
 
 use anyhow::Result;
 use clap::{ArgAction, CommandFactory, Parser, Subcommand};
-use std::path::PathBuf;
+use std::fs;
+use std::io::Write;
+use std::path::{Path, PathBuf};
 
 use checkpoint::{print_checkpoint, print_checkpoint_compact, CheckpointPayload};
 use db::{
@@ -71,6 +73,8 @@ enum Commands {
     Clear,
     /// Run MCP stdio server for editor/agent integration
     McpServer,
+    /// Install agent rule files into the current project (Claude Code, Cursor, Codex)
+    InitRules,
     /// Generate shell completions
     Completions {
         #[arg(value_enum)]
@@ -85,6 +89,10 @@ fn main() -> Result<()> {
     if let Commands::Completions { shell } = cli.command {
         clap_complete::generate(shell, &mut Cli::command(), "switch", &mut std::io::stdout());
         return Ok(());
+    }
+
+    if let Commands::InitRules = cli.command {
+        return init_rules();
     }
 
     let conn = open_db(&db_path)?;
@@ -150,9 +158,55 @@ fn main() -> Result<()> {
         Commands::McpServer => {
             run_mcp_server(&conn)?;
         }
-        Commands::Completions { .. } => unreachable!(),
+        Commands::InitRules | Commands::Completions { .. } => unreachable!(),
     }
 
+    Ok(())
+}
+
+const RULE_MARKER: &str = "switch context handoff";
+const CLAUDE_RULE: &str = include_str!("../rules/CLAUDE.md");
+const CURSOR_RULE: &str = include_str!("../rules/switch.mdc");
+const AGENTS_RULE: &str = include_str!("../rules/AGENTS.md");
+
+fn init_rules() -> Result<()> {
+    println!("Installing switch rule files...\n");
+
+    // Claude Code — append to CLAUDE.md at project root
+    write_rule_append(Path::new("CLAUDE.md"), CLAUDE_RULE, "Claude Code")?;
+
+    // Cursor — dedicated file, always write
+    fs::create_dir_all(".cursor/rules")?;
+    write_rule_overwrite(Path::new(".cursor/rules/switch.mdc"), CURSOR_RULE, "Cursor")?;
+
+    // Codex — append to AGENTS.md at project root
+    write_rule_append(Path::new("AGENTS.md"), AGENTS_RULE, "Codex")?;
+
+    println!("\nDone. Configure MCP in each tool, then agents will save and resume context automatically.");
+    println!("See README for MCP config snippets.");
+    Ok(())
+}
+
+fn write_rule_append(path: &Path, content: &str, tool: &str) -> Result<()> {
+    if path.exists() {
+        let existing = fs::read_to_string(path)?;
+        if existing.contains(RULE_MARKER) {
+            println!("  skipped   {} — already installed ({})", path.display(), tool);
+            return Ok(());
+        }
+        let mut file = fs::OpenOptions::new().append(true).open(path)?;
+        write!(file, "\n{content}")?;
+        println!("  appended  {} ({})", path.display(), tool);
+    } else {
+        fs::write(path, content)?;
+        println!("  created   {} ({})", path.display(), tool);
+    }
+    Ok(())
+}
+
+fn write_rule_overwrite(path: &Path, content: &str, tool: &str) -> Result<()> {
+    fs::write(path, content)?;
+    println!("  created   {} ({})", path.display(), tool);
     Ok(())
 }
 

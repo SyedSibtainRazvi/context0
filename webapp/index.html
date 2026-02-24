@@ -74,6 +74,9 @@
 
       <section id="quickstart" class="panel reveal">
         <h2>Quickstart</h2>
+        <p>
+          Best flow: install switch, add MCP + a rule file, then let the AI save and resume context. Say &ldquo;save context&rdquo; or &ldquo;I&rsquo;m switching&rdquo; when you change tools.
+        </p>
         <ol class="steps">
           <li>
             <h3>Install</h3>
@@ -83,19 +86,20 @@
             </div>
           </li>
           <li>
-            <h3>Save a checkpoint</h3>
+            <h3>Add MCP and a rule file</h3>
+            <p>Configure <code>switch mcp-server</code> in your tool (see MCP setup below). Then add the rule so the agent uses switch: Cursor → <code>rules/switch.mdc</code> into <code>.cursor/rules/</code>; Claude Code → <code>rules/CLAUDE.md</code>; Codex → <code>rules/AGENTS.md</code>.</p>
+          </li>
+          <li>
+            <h3>Use it</h3>
+            <p>When you open a session, the agent calls <code>get_context</code> and resumes. When you say &ldquo;save context&rdquo; or &ldquo;I&rsquo;m switching&rdquo;, the agent calls <code>save_context</code> with a summary. No manual CLI needed.</p>
+          </li>
+          <li>
+            <h3>CLI fallback</h3>
             <div class="code-wrap">
               <pre><code id="save-cmd">switch save --done "wired auth middleware" --next "fix integration tests"</code></pre>
               <button class="copy-btn" data-copy-target="save-cmd">Copy</button>
             </div>
-          </li>
-          <li>
-            <h3>Resume it later (or in another tool)</h3>
-            <div class="code-wrap">
-              <pre><code id="resume-cmd">switch resume
-switch resume --json</code></pre>
-              <button class="copy-btn" data-copy-target="resume-cmd">Copy</button>
-            </div>
+            <p class="hint">Resume: <code>switch resume</code> or <code>switch resume --json</code></p>
           </li>
         </ol>
       </section>
