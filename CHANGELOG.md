@@ -4,8 +4,19 @@
 
 ## [0.1.2] - 2026-02-25
 
-- Fix `--db` help text to show correct default path
-- Bump version to match release tag
+- Fix `--db` help text to show correct default path (`~/.context0/context0.db`)
+- Fix release workflow to use `macos-latest` for Intel macOS cross-compile (retired `macos-13` runner)
+- Responsive mobile layout for webapp — fix code block overflow, copy button position, font scaling, panel shadows
+- Deploy webapp via GitHub Pages
+- `curl | sh` install script — auto-detects platform, no Rust required
+
+## [0.1.1] - 2026-02-25
+
+- Rename project from `switch` to `context0`
+- New tagline: git-scoped session state for AI coding agents
+- `init-rules` now writes `.cursor/rules/context0.mdc`, `CLAUDE.md`, and `AGENTS.md`
+- Updated MCP tool descriptions to coach agents on when and how to save context
+- Agent rule files for Claude Code, Cursor, and Codex
 
 ## [0.1.0] - 2026-02-25
 
