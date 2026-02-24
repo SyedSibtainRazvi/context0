@@ -1,25 +1,110 @@
 # switch
 
-Local-first shared context for coding agents across the same repo/branch.
+Local-first context handoff for AI coding agents.
 
-## What it does (v0)
+Save a checkpoint when you stop. Resume it in any tool — Claude Code, Cursor, Codex — on the same repo and branch, with one command.
 
-- Save checkpoints: `done`, `next`, `blockers`, `tests`, touched files.
-- Resume latest context for current `repo + branch`.
-- Keep everything in a local SQLite database.
+```
+switch save --done "wired auth middleware" --next "fix integration tests"
+switch resume
+```
+
+## Why
+
+AI coding sessions have no memory between tools. If you start in Claude Code, move to Cursor, and come back, you lose context. `switch` fixes that with a structured checkpoint scoped to your current `git repo + branch` — so context follows your work, not your tool.
+
+## Install
+
+```bash
+cargo install --path .
+```
+
+Or download a prebuilt binary from [Releases](../../releases).
 
 ## Commands
 
 ```bash
-switch init
-switch save --done "wired auth middleware" --next "fix integration tests" --files src/auth.rs --tests "cargo test auth::"
+# Save a checkpoint for the current repo + branch
+switch save \
+  --done "implemented OAuth flow" \
+  --next "add refresh token logic" \
+  --blockers "waiting on API key from infra" \
+  --tests "cargo test auth::" \
+  --files src/auth.rs src/middleware.rs \
+  --session my-session
+
+# Resume latest checkpoint (human-readable)
 switch resume
+
+# Resume as JSON (for scripting or piping)
 switch resume --json
+
+# Show recent checkpoints
 switch log --limit 20
+
+# Start the MCP stdio server
+switch mcp-server
 ```
 
-## Notes
+All commands auto-detect `repo`, `branch`, and `commit` from git. No configuration needed.
 
-- Database default path: `~/.switch/switch.db`
-- Context scope key: `git repo root + git branch`
-- This scaffold is local-only, no cloud sync.
+## MCP Server
+
+`switch mcp-server` starts a stdio MCP server that exposes three tools:
+
+| Tool | Description |
+|---|---|
+| `get_context` | Get the latest checkpoint for a repo + branch |
+| `save_context` | Save a new checkpoint |
+| `list_context` | List recent checkpoints |
+
+This lets Claude Code and Cursor call `switch` natively — no manual terminal commands.
+
+### Claude Code
+
+Add to `~/.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "switch": {
+      "command": "switch",
+      "args": ["mcp-server"]
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global):
+
+```json
+{
+  "mcpServers": {
+    "switch": {
+      "command": "switch",
+      "args": ["mcp-server"]
+    }
+  }
+}
+```
+
+Full input/output contracts: [`docs/MCP_CONTRACT.md`](docs/MCP_CONTRACT.md)
+
+## How it works
+
+- Context is scoped by `git repo root + branch` — running `switch resume` on `feature/auth` always returns that branch's last checkpoint
+- Checkpoints are stored in a local SQLite database at `~/.switch/switch.db`
+- No cloud, no auth, no runtime dependencies
+
+## Storage
+
+| Setting | Default |
+|---|---|
+| Database | `~/.switch/switch.db` |
+| Override | `switch --db /path/to/custom.db <command>` |
+
+## License
+
+MIT

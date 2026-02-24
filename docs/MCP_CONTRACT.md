@@ -1,6 +1,6 @@
 # MCP_CONTRACT
 
-Planned minimal MCP tools for editor/agent integration:
+MCP tools exposed by `switch mcp-server`:
 
 ## `get_context`
 
