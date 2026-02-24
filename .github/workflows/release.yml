@@ -20,7 +20,7 @@ jobs:
             os: ubuntu-latest
             ext: tar.gz
           - target: x86_64-apple-darwin
-            os: macos-13
+            os: macos-latest
             ext: tar.gz
           - target: aarch64-apple-darwin
             os: macos-latest
