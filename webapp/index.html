@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>switch docs</title>
+    <meta
+      name="description"
+      content="switch is local-first context handoff for AI coding tools. Learn what it is and how to use it."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb bg-orb-a"></div>
+    <div class="bg-orb bg-orb-b"></div>
+
+    <header class="topbar">
+      <a class="brand" href="#top">
+        <span class="brand-mark">S</span>
+        <span>switch</span>
+      </a>
+      <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false">
+        Menu
+      </button>
+      <nav class="topnav" id="topnav">
+        <a href="#what">What is it</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="#commands">Commands</a>
+        <a href="#mcp">MCP setup</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero reveal">
+        <p class="kicker">Local-first context handoff</p>
+        <h1>Keep coding context when you switch tools.</h1>
+        <p class="lead">
+          <code>switch</code> saves a checkpoint for your current repo and branch, then resumes it in Claude
+          Code, Cursor, Codex, or plain terminal.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#quickstart">Start in 2 minutes</a>
+          <a class="btn btn-ghost" href="#mcp">Use with MCP</a>
+        </div>
+      </section>
+
+      <section id="what" class="panel reveal">
+        <h2>What is switch?</h2>
+        <p>
+          AI coding sessions do not share memory across tools. <code>switch</code> stores compact checkpoints in
+          local SQLite so your "what I did" and "what to do next" follow your git branch.
+        </p>
+        <div class="grid three">
+          <article>
+            <h3>Scoped</h3>
+            <p>Context key is <code>repo_root + branch</code>, so each branch stays isolated.</p>
+          </article>
+          <article>
+            <h3>Local</h3>
+            <p>No cloud dependency. Data is saved at <code>~/.switch/switch.db</code> by default.</p>
+          </article>
+          <article>
+            <h3>Fast</h3>
+            <p>Save, resume, and log are lightweight CLI operations built for active dev loops.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="quickstart" class="panel reveal">
+        <h2>Quickstart</h2>
+        <ol class="steps">
+          <li>
+            <h3>Install</h3>
+            <div class="code-wrap">
+              <pre><code id="install-cmd">cargo install --path .</code></pre>
+              <button class="copy-btn" data-copy-target="install-cmd">Copy</button>
+            </div>
+          </li>
+          <li>
+            <h3>Save a checkpoint</h3>
+            <div class="code-wrap">
+              <pre><code id="save-cmd">switch save --done "wired auth middleware" --next "fix integration tests"</code></pre>
+              <button class="copy-btn" data-copy-target="save-cmd">Copy</button>
+            </div>
+          </li>
+          <li>
+            <h3>Resume it later (or in another tool)</h3>
+            <div class="code-wrap">
+              <pre><code id="resume-cmd">switch resume
+switch resume --json</code></pre>
+              <button class="copy-btn" data-copy-target="resume-cmd">Copy</button>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section id="commands" class="panel reveal">
+        <h2>Commands</h2>
+        <div class="grid two">
+          <article>
+            <h3>save</h3>
+            <p>Write a checkpoint for the current repo + branch.</p>
+            <div class="code-wrap compact">
+              <pre><code id="cmd-save">switch save \
+  --done "implemented OAuth flow" \
+  --next "add refresh token logic" \
+  --blockers "waiting on API key" \
+  --tests "cargo test auth::" \
+  --files src/auth.rs src/middleware.rs</code></pre>
+              <button class="copy-btn" data-copy-target="cmd-save">Copy</button>
+            </div>
+          </article>
+          <article>
+            <h3>resume</h3>
+            <p>Print the latest checkpoint for the current repo + branch.</p>
+            <div class="code-wrap compact">
+              <pre><code id="cmd-resume">switch resume
+switch resume --json</code></pre>
+              <button class="copy-btn" data-copy-target="cmd-resume">Copy</button>
+            </div>
+          </article>
+          <article>
+            <h3>log</h3>
+            <p>Show recent checkpoints in reverse chronological order.</p>
+            <div class="code-wrap compact">
+              <pre><code id="cmd-log">switch log --limit 20</code></pre>
+              <button class="copy-btn" data-copy-target="cmd-log">Copy</button>
+            </div>
+          </article>
+          <article>
+            <h3>mcp-server</h3>
+            <p>Run MCP over stdio so tools can read/write context directly.</p>
+            <div class="code-wrap compact">
+              <pre><code id="cmd-mcp">switch mcp-server</code></pre>
+              <button class="copy-btn" data-copy-target="cmd-mcp">Copy</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="mcp" class="panel reveal">
+        <h2>MCP setup</h2>
+        <p>
+          Add <code>switch mcp-server</code> to your editor/tool MCP config and use tools:
+          <code>get_context</code>, <code>save_context</code>, and <code>list_context</code>.
+        </p>
+
+        <div class="tab-controls" role="tablist" aria-label="MCP Config Tabs">
+          <button class="tab-btn active" data-tab="claude" role="tab" aria-selected="true">Claude Code</button>
+          <button class="tab-btn" data-tab="cursor" role="tab" aria-selected="false">Cursor</button>
+        </div>
+
+        <div class="tab-panel active" data-panel="claude">
+          <div class="code-wrap">
+            <pre><code id="claude-config">{
+  "mcpServers": {
+    "switch": {
+      "command": "switch",
+      "args": ["mcp-server"]
+    }
+  }
+}</code></pre>
+            <button class="copy-btn" data-copy-target="claude-config">Copy</button>
+          </div>
+          <p class="hint">File: <code>~/.claude/settings.json</code></p>
+        </div>
+
+        <div class="tab-panel" data-panel="cursor">
+          <div class="code-wrap">
+            <pre><code id="cursor-config">{
+  "mcpServers": {
+    "switch": {
+      "command": "switch",
+      "args": ["mcp-server"]
+    }
+  }
+}</code></pre>
+            <button class="copy-btn" data-copy-target="cursor-config">Copy</button>
+          </div>
+          <p class="hint">File: <code>.cursor/mcp.json</code> (project) or <code>~/.cursor/mcp.json</code> (global)</p>
+        </div>
+      </section>
+
+      <section class="panel reveal">
+        <h2>Storage and scope</h2>
+        <div class="grid two">
+          <article>
+            <h3>Default database</h3>
+            <p><code>~/.switch/switch.db</code></p>
+          </article>
+          <article>
+            <h3>Custom database</h3>
+            <div class="code-wrap compact">
+              <pre><code id="db-cmd">switch --db /path/to/custom.db resume</code></pre>
+              <button class="copy-btn" data-copy-target="db-cmd">Copy</button>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer reveal">
+      <p>
+        Need the protocol-level details? See
+        <a href="../docs/MCP_CONTRACT.md">MCP_CONTRACT.md</a>,
+        <a href="../docs/SCHEMA.md">SCHEMA.md</a>, and
+        <a href="../docs/SPEC.md">SPEC.md</a>.
+      </p>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
