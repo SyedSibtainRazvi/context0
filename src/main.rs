@@ -19,7 +19,7 @@ use mcp::run_mcp_server;
 
 #[derive(Debug, Parser)]
 #[command(
-    name = "switch",
+    name = "context0",
     version,
     about = "Local-first context broker for coding agents"
 )]
@@ -87,7 +87,7 @@ fn main() -> Result<()> {
     let db_path = cli.db.unwrap_or_else(default_db_path);
 
     if let Commands::Completions { shell } = cli.command {
-        clap_complete::generate(shell, &mut Cli::command(), "switch", &mut std::io::stdout());
+        clap_complete::generate(shell, &mut Cli::command(), "context0", &mut std::io::stdout());
         return Ok(());
     }
 
@@ -164,20 +164,20 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-const RULE_MARKER: &str = "switch context handoff";
+const RULE_MARKER: &str = "context0 context handoff";
 const CLAUDE_RULE: &str = include_str!("../rules/CLAUDE.md");
-const CURSOR_RULE: &str = include_str!("../rules/switch.mdc");
+const CURSOR_RULE: &str = include_str!("../rules/context0.mdc");
 const AGENTS_RULE: &str = include_str!("../rules/AGENTS.md");
 
 fn init_rules() -> Result<()> {
-    println!("Installing switch rule files...\n");
+    println!("Installing context0 rule files...\n");
 
     // Claude Code — append to CLAUDE.md at project root
     write_rule_append(Path::new("CLAUDE.md"), CLAUDE_RULE, "Claude Code")?;
 
     // Cursor — dedicated file, always write
     fs::create_dir_all(".cursor/rules")?;
-    write_rule_overwrite(Path::new(".cursor/rules/switch.mdc"), CURSOR_RULE, "Cursor")?;
+    write_rule_overwrite(Path::new(".cursor/rules/context0.mdc"), CURSOR_RULE, "Cursor")?;
 
     // Codex — append to AGENTS.md at project root
     write_rule_append(Path::new("AGENTS.md"), AGENTS_RULE, "Codex")?;
@@ -191,7 +191,11 @@ fn write_rule_append(path: &Path, content: &str, tool: &str) -> Result<()> {
     if path.exists() {
         let existing = fs::read_to_string(path)?;
         if existing.contains(RULE_MARKER) {
-            println!("  skipped   {} — already installed ({})", path.display(), tool);
+            println!(
+                "  skipped   {} — already installed ({})",
+                path.display(),
+                tool
+            );
             return Ok(());
         }
         let mut file = fs::OpenOptions::new().append(true).open(path)?;
@@ -212,7 +216,7 @@ fn write_rule_overwrite(path: &Path, content: &str, tool: &str) -> Result<()> {
 
 fn default_db_path() -> PathBuf {
     match dirs::home_dir() {
-        Some(home) => home.join(".switch").join("switch.db"),
-        None => PathBuf::from(".switch/switch.db"),
+        Some(home) => home.join(".context0").join("context0.db"),
+        None => PathBuf::from(".context0/context0.db"),
     }
 }

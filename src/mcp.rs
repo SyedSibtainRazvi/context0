@@ -185,7 +185,7 @@ fn handle_mcp_request(
                     "tools": {}
                 },
                 "serverInfo": {
-                    "name": "switch-mcp",
+                    "name": "context0-mcp",
                     "version": env!("CARGO_PKG_VERSION"),
                 }
             }))
@@ -472,13 +472,13 @@ mod tests {
     fn temp_db_path() -> std::path::PathBuf {
         let test_id = TEST_COUNTER.fetch_add(1, Ordering::Relaxed);
         let base = std::env::temp_dir().join(format!(
-            "switch-mcp-test-{}-{}-{}",
+            "context0-mcp-test-{}-{}-{}",
             std::process::id(),
             db::current_time_ms().expect("time"),
             test_id
         ));
         std::fs::create_dir_all(&base).expect("create temp dir");
-        base.join("switch.db")
+        base.join("context0.db")
     }
 
     #[test]

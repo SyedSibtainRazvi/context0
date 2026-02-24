@@ -1,12 +1,12 @@
 ---
-description: Use switch MCP to save and resume coding context when the user switches between AI tools (Cursor, Claude Code, Codex).
+description: Use context0 MCP to save and resume coding context when the user switches between AI tools (Cursor, Claude Code, Codex).
 globs: "*"
 alwaysApply: true
 ---
 
-# switch context handoff
+# context0 context handoff
 
-This project uses **switch** for context handoff between AI coding tools. You have access to the switch MCP server; use its tools so the user can resume work in another tool without losing context.
+This project uses **context0** for context handoff between AI coding tools. You have access to the context0 MCP server; use its tools so the user can resume work in another tool without losing context.
 
 ## On session start
 
