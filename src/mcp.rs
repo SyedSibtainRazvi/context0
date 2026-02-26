@@ -74,8 +74,7 @@ fn read_mcp_message<R: BufRead>(reader: &mut R) -> Result<Option<Value>> {
         if trimmed.is_empty() {
             continue;
         }
-        let message: Value =
-            serde_json::from_str(trimmed).context("invalid MCP JSON payload")?;
+        let message: Value = serde_json::from_str(trimmed).context("invalid MCP JSON payload")?;
         return Ok(Some(message));
     }
 }
