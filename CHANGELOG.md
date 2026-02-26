@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-02-27
+
+- Fix CI test: detect default branch dynamically instead of hardcoding `main` — works on runners where `git init` defaults to `master`
+- Fix mobile layout: storage/override code blocks now wrap correctly on small screens
+- Docs: rewrite README and landing page to lead with automatic MCP workflow, add "free, no account, no cloud" upfront
+
+## [0.1.5] - 2026-02-26
+
+- Docs: clarify MCP setup per tool, add full binary path instructions for Cursor and Codex
+
 ## [0.1.4] - 2026-02-26
 
 - Fix MCP stdio transport: switch from Content-Length framing to newline-delimited JSON (NDJSON) — Claude Code 2.1+ sends raw JSON lines, not LSP-style headers
