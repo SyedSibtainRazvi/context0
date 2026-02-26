@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>context0 docs</title>
+    <title>context0</title>
     <meta
       name="description"
       content="context0 — git-scoped session state for AI coding agents. Save where you left off. Resume in any AI tool."
@@ -33,6 +33,7 @@
         <a href="#quickstart">Quickstart</a>
         <a href="#commands">Commands</a>
         <a href="#mcp">MCP setup</a>
+        <a href="#storage">Storage</a>
       </nav>
     </header>
 
@@ -73,43 +74,55 @@
 
       <section id="quickstart" class="panel reveal">
         <h2>Quickstart</h2>
-        <p>
-          Best flow: install context0, add MCP + a rule file, then let the AI save and resume context. Say &ldquo;save context&rdquo; or &ldquo;I&rsquo;m switching&rdquo; when you change tools.
-        </p>
+
+        <h3>With MCP &mdash; recommended</h3>
+        <p>The AI saves and resumes context for you automatically. Just say &ldquo;save context&rdquo; or &ldquo;I&rsquo;m switching tools&rdquo; at the end of a session.</p>
         <ol class="steps">
           <li>
-            <h3>Install</h3>
+            <strong>Install</strong>
             <div class="code-wrap">
               <pre><code id="install-cmd">curl -fsSL https://raw.githubusercontent.com/SyedSibtainRazvi/context0/main/install.sh | sh</code></pre>
               <button class="copy-btn" data-copy-target="install-cmd">Copy</button>
             </div>
+            <p class="hint">Windows: download the <code>.zip</code> from <a href="https://github.com/SyedSibtainRazvi/context0/releases">Releases</a> and add the binary to your PATH.</p>
           </li>
           <li>
-            <h3>Add MCP and rule files</h3>
+            <strong>Install rule files</strong> (once per project)
             <div class="code-wrap">
               <pre><code id="init-rules-cmd">context0 init-rules</code></pre>
               <button class="copy-btn" data-copy-target="init-rules-cmd">Copy</button>
             </div>
-            <p>Then configure <code>context0 mcp-server</code> in your tool (see MCP setup below).</p>
+            <p class="hint">Writes <code>CLAUDE.md</code>, <code>.cursor/rules/context0.mdc</code>, and <code>AGENTS.md</code> into the current project.</p>
           </li>
           <li>
-            <h3>Use it</h3>
-            <p>When you open a session, the agent calls <code>get_context</code> and resumes. When you say &ldquo;save context&rdquo; or &ldquo;I&rsquo;m switching&rdquo;, the agent calls <code>save_context</code> with a summary. No manual CLI needed.</p>
-          </li>
-          <li>
-            <h3>CLI fallback</h3>
+            <strong>Add MCP config</strong> to your tool&rsquo;s settings file
             <div class="code-wrap">
-              <pre><code id="save-cmd">context0 save --done "wired auth middleware" --next "fix integration tests"</code></pre>
-              <button class="copy-btn" data-copy-target="save-cmd">Copy</button>
+              <pre><code id="mcp-quick-config">{
+  "mcpServers": {
+    "context0": {
+      "command": "context0",
+      "args": ["mcp-server"]
+    }
+  }
+}</code></pre>
+              <button class="copy-btn" data-copy-target="mcp-quick-config">Copy</button>
             </div>
-            <p class="hint">Resume: <code>context0 resume</code> or <code>context0 resume --json</code></p>
+            <p class="hint">Claude Code: <code>~/.claude/settings.json</code> &nbsp;&middot;&nbsp; Cursor: <code>~/.cursor/mcp.json</code> &nbsp;&middot;&nbsp; Codex: <code>~/.codex/config.json</code></p>
           </li>
         </ol>
+
+        <h3>CLI only &mdash; no MCP required</h3>
+        <p>Save and resume manually from any terminal. No config needed.</p>
+        <div class="code-wrap">
+          <pre><code id="save-cmd">context0 save --done "wired auth middleware" --next "fix integration tests"</code></pre>
+          <button class="copy-btn" data-copy-target="save-cmd">Copy</button>
+        </div>
+        <p class="hint">Resume: <code>context0 resume</code> &nbsp;&middot;&nbsp; <code>context0 resume --json</code></p>
       </section>
 
       <section id="commands" class="panel reveal">
         <h2>Commands</h2>
-        <div class="grid two">
+        <div class="grid">
           <article>
             <h3>save</h3>
             <p>Write a checkpoint for the current repo + branch.</p>
@@ -164,19 +177,30 @@ context0 resume --json</code></pre>
               <button class="copy-btn" data-copy-target="cmd-clear">Copy</button>
             </div>
           </article>
+          <article>
+            <h3>completions</h3>
+            <p>Generate shell completions for bash, zsh, or fish.</p>
+            <div class="code-wrap compact">
+              <pre><code id="cmd-completions">context0 completions zsh >> ~/.zshrc
+context0 completions bash >> ~/.bashrc
+context0 completions fish > ~/.config/fish/completions/context0.fish</code></pre>
+              <button class="copy-btn" data-copy-target="cmd-completions">Copy</button>
+            </div>
+          </article>
         </div>
       </section>
 
       <section id="mcp" class="panel reveal">
         <h2>MCP setup</h2>
         <p>
-          Add <code>context0 mcp-server</code> to your editor/tool MCP config and use tools:
-          <code>get_context</code>, <code>save_context</code>, and <code>list_context</code>.
+          Add <code>context0 mcp-server</code> to your editor&rsquo;s MCP config. The agent then calls
+          <code>get_context</code>, <code>save_context</code>, and <code>list_context</code> automatically.
         </p>
 
         <div class="tab-controls" role="tablist" aria-label="MCP Config Tabs">
           <button class="tab-btn active" data-tab="claude" role="tab" aria-selected="true">Claude Code</button>
           <button class="tab-btn" data-tab="cursor" role="tab" aria-selected="false">Cursor</button>
+          <button class="tab-btn" data-tab="codex" role="tab" aria-selected="false">Codex</button>
         </div>
 
         <div class="tab-panel active" data-panel="claude">
@@ -208,11 +232,26 @@ context0 resume --json</code></pre>
           </div>
           <p class="hint">File: <code>.cursor/mcp.json</code> (project) or <code>~/.cursor/mcp.json</code> (global)</p>
         </div>
+
+        <div class="tab-panel" data-panel="codex">
+          <div class="code-wrap">
+            <pre><code id="codex-config">{
+  "mcpServers": {
+    "context0": {
+      "command": "context0",
+      "args": ["mcp-server"]
+    }
+  }
+}</code></pre>
+            <button class="copy-btn" data-copy-target="codex-config">Copy</button>
+          </div>
+          <p class="hint">File: <code>~/.codex/config.json</code></p>
+        </div>
       </section>
 
-      <section class="panel reveal">
-        <h2>Storage and scope</h2>
-        <div class="grid two">
+      <section id="storage" class="panel reveal">
+        <h2>Storage and overrides</h2>
+        <div class="grid three">
           <article>
             <h3>Default database</h3>
             <p><code>~/.context0/context0.db</code></p>
@@ -223,6 +262,14 @@ context0 resume --json</code></pre>
               <pre><code id="db-cmd">context0 --db /path/to/custom.db resume</code></pre>
               <button class="copy-btn" data-copy-target="db-cmd">Copy</button>
             </div>
+          </article>
+          <article>
+            <h3>Override repo or branch</h3>
+            <div class="code-wrap compact">
+              <pre><code id="override-cmd">context0 --repo /path/to/repo --branch feature/x resume</code></pre>
+              <button class="copy-btn" data-copy-target="override-cmd">Copy</button>
+            </div>
+            <p class="hint">Useful in monorepos or scripts running outside the target directory.</p>
           </article>
         </div>
       </section>
