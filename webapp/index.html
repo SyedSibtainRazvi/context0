@@ -39,14 +39,14 @@
 
     <main id="top">
       <section class="hero reveal">
-        <p class="kicker">git-scoped session state</p>
+        <p class="kicker">free &middot; no account &middot; no cloud &middot; open source</p>
         <h1>Your AI context follows your git branch.</h1>
         <p class="lead">
-          Save where you left off. Resume in any AI tool — Claude Code, Cursor, Codex — on the same repo and branch, with one command.
+          Tokens run out. You switch tools. You re-explain everything. <code>context0</code> fixes that — just say &ldquo;I&rsquo;m switching&rdquo; and the agent saves context automatically. Resume in any tool instantly.
         </p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#quickstart">Start in 2 minutes</a>
-          <a class="btn btn-ghost" href="#mcp">Use with MCP</a>
+          <a class="btn btn-ghost" href="#mcp">MCP setup</a>
         </div>
       </section>
 
@@ -54,20 +54,20 @@
         <h2>What is context0?</h2>
         <p>
           AI coding sessions have no memory between tools. <code>context0</code> stores compact checkpoints in
-          local SQLite, scoped to your git repo and branch — so your task state follows your code, not your tool.
+          local SQLite, scoped to your git repo and branch. With MCP configured, the agent saves and resumes automatically &mdash; no commands to run, nothing to learn.
         </p>
         <div class="grid three">
           <article>
-            <h3>Scoped</h3>
-            <p>Context key is <code>repo_root + branch</code>, so each branch stays isolated.</p>
+            <h3>Automatic</h3>
+            <p>Say &ldquo;save context&rdquo; or &ldquo;I&rsquo;m switching&rdquo; — the agent does the rest. No commands to memorize.</p>
           </article>
           <article>
             <h3>Local</h3>
-            <p>No cloud dependency. Data is saved at <code>~/.context0/context0.db</code> by default.</p>
+            <p>No cloud, no account, no signup. Data stays on your machine at <code>~/.context0/context0.db</code>.</p>
           </article>
           <article>
-            <h3>Fast</h3>
-            <p>Save, resume, and log are lightweight CLI operations built for active dev loops.</p>
+            <h3>Scoped</h3>
+            <p>Context key is <code>repo_root + branch</code> — each branch stays completely isolated.</p>
           </article>
         </div>
       </section>
@@ -76,7 +76,7 @@
         <h2>Quickstart</h2>
 
         <h3>With MCP &mdash; recommended</h3>
-        <p>The AI saves and resumes context for you automatically. Just say &ldquo;save context&rdquo; or &ldquo;I&rsquo;m switching tools&rdquo; at the end of a session.</p>
+        <p>Set it up once. After that, just say &ldquo;save context&rdquo; or &ldquo;I&rsquo;m switching&rdquo; — the agent handles everything. No commands to run, no docs to read.</p>
         <ol class="steps">
           <li>
             <strong>Install</strong>

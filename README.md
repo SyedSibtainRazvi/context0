@@ -2,11 +2,13 @@
 
 Save where you left off. Resume in any AI tool — context follows your git branch.
 
-<img width="1470" height="802" alt="Screenshot 2026-02-25 at 2 12 27 AM" src="https://github.com/user-attachments/assets/cd17149f-3199-4b66-9f06-fc7f142a1138" />
+**Free. No account. No cloud. Nothing to sign up for.**
+
+<img width="1470" height="802" alt="Screenshot 2026-02-25 at 2 12 27 AM" src="https://github.com/user-attachments/assets/cd17149f-3199-4b66-9f06-fc7f142a1138" />
 
 ## Why
 
-AI coding sessions have no memory between tools. If you start in Claude Code, move to Cursor, and come back, you lose context. `context0` fixes that with a structured checkpoint scoped to your current `git repo + branch` — so context follows your work, not your tool.
+AI coding sessions have no memory between tools. Tokens run out in Claude Code, you switch to Cursor, and you're back to re-explaining everything. `context0` fixes that — it saves a checkpoint scoped to your `git repo + branch` so any tool can resume right where you left off.
 
 ## Install
 
@@ -14,93 +16,31 @@ AI coding sessions have no memory between tools. If you start in Claude Code, mo
 curl -fsSL https://raw.githubusercontent.com/SyedSibtainRazvi/context0/main/install.sh | sh
 ```
 
-Works on macOS (Intel and Apple Silicon) and Linux x86_64. Downloads the right prebuilt binary for your platform.
+Works on macOS (Intel and Apple Silicon) and Linux x86_64.
 
 **Windows:** download the `.zip` from [Releases](https://github.com/SyedSibtainRazvi/context0/releases) and add the binary to your PATH.
 
+## How it works (automatic with MCP)
 
-## Commands
+With MCP configured, you don't run any commands. Just say **"save context"** or **"I'm switching"** and the agent saves everything. On the next session — in any tool — the agent loads it automatically.
+
+**Step 1 — install:**
 
 ```bash
-# Save a checkpoint for the current repo + branch
-context0 save \
-  --done "implemented OAuth flow" \
-  --next "add refresh token logic" \
-  --blockers "waiting on API key from infra" \
-  --tests "cargo test auth::" \
-  --files src/auth.rs --files src/middleware.rs \
-  --session my-session
+curl -fsSL https://raw.githubusercontent.com/SyedSibtainRazvi/context0/main/install.sh | sh
+```
 
-# Resume latest checkpoint (human-readable)
-context0 resume
+**Step 2 — install rule files** (once per project):
 
-# Resume as JSON (for scripting or piping)
-context0 resume --json
-
-# Show recent checkpoints
-context0 log --limit 20
-
-# Delete all checkpoints for current repo + branch
-context0 clear
-
-# Override repo/branch detection
-context0 --repo /path/to/repo --branch feature/x resume
-
-# Generate shell completions
-context0 completions bash >> ~/.bashrc
-context0 completions zsh >> ~/.zshrc
-context0 completions fish > ~/.config/fish/completions/context0.fish
-
-# Start the MCP stdio server
-context0 mcp-server
-
-# Install agent rule files into the current project (one-time per project)
+```bash
 context0 init-rules
 ```
 
-All commands auto-detect `repo`, `branch`, and `commit` from git. Use `--repo` and `--branch` to override.
+This tells the AI agent when and how to save/resume context. Writes `CLAUDE.md`, `.cursor/rules/context0.mdc`, and `AGENTS.md` into your project.
 
-## Docs
-
-[https://syedsibtainrazvi.github.io/context0](https://syedsibtainrazvi.github.io/context0)
-
-## MCP Server
-
-`context0 mcp-server` starts a stdio MCP server that exposes three tools:
-
-| Tool | Description |
-|---|---|
-| `get_context` | Get the latest checkpoint for a repo + branch |
-| `save_context` | Save a new checkpoint |
-| `list_context` | List recent checkpoints |
-
-This lets Claude Code, Cursor, and Codex call `context0` natively — no manual terminal commands.
-
-### Agent-driven workflow (recommended)
-
-With MCP configured and rule files in place, the AI agent saves and resumes context for you automatically.
-
-**Step 1 — install rule files** (run once per project):
-
-```bash
-cd your-project
-context0 init-rules
-```
-
-This writes the right file to the right place for each tool:
-- `CLAUDE.md` — Claude Code
-- `.cursor/rules/context0.mdc` — Cursor
-- `AGENTS.md` — Codex
-
-Idempotent: safe to re-run, won't duplicate.
-
-**Step 2 — configure MCP** for your tool (see Claude Code / Cursor below).
-
-**That's it.** On session start the agent calls `get_context` and resumes. When you say "save context" or "I'm switching", the agent calls `save_context` with a full summary. No manual CLI needed.
+**Step 3 — configure MCP** for your tool:
 
 ### Claude Code
-
-Run once to register:
 
 ```bash
 claude mcp add context0 context0 mcp-server
@@ -108,13 +48,7 @@ claude mcp add context0 context0 mcp-server
 
 ### Cursor
 
-Cursor doesn't inherit your shell PATH, so use the full binary path. First find it:
-
-```bash
-which context0
-```
-
-Then add to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project), replacing the path with the output above:
+Cursor doesn't inherit your shell PATH — use the full binary path. Find it with `which context0`, then add to `~/.cursor/mcp.json`:
 
 ```json
 {
@@ -127,11 +61,11 @@ Then add to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project), repla
 }
 ```
 
-Restart Cursor after editing the file.
+Restart Cursor after editing.
 
 ### Codex
 
-Add to `~/.codex/config.json`, using the full path from `which context0`:
+Add to `~/.codex/config.json` using the full path from `which context0`:
 
 ```json
 {
@@ -144,10 +78,40 @@ Add to `~/.codex/config.json`, using the full path from `which context0`:
 }
 ```
 
-## How it works
+**That's it.** The agent handles everything from here. No commands to memorize.
 
-- Context is scoped by `git repo root + branch` — running `context0 resume` on `feature/auth` always returns that branch's last checkpoint
-- Checkpoints are stored in a local SQLite database at `~/.context0/context0.db`
+## CLI (optional, no MCP required)
+
+Prefer to do it manually, or don't want MCP setup? The CLI works standalone:
+
+```bash
+# Save a checkpoint
+context0 save \
+  --done "implemented OAuth flow" \
+  --next "add refresh token logic" \
+  --files src/auth.rs --files src/middleware.rs
+
+# Resume latest checkpoint
+context0 resume
+
+# Resume as JSON
+context0 resume --json
+
+# Show recent checkpoints
+context0 log --limit 20
+
+# Delete checkpoints for current branch
+context0 clear
+```
+
+## Docs
+
+[https://syedsibtainrazvi.github.io/context0](https://syedsibtainrazvi.github.io/context0)
+
+## How context is scoped
+
+- Key is `git repo root + branch` — `feature/auth` and `main` stay completely separate
+- Stored in local SQLite at `~/.context0/context0.db` — nothing leaves your machine
 - No cloud, no auth, no runtime dependencies
 
 ## Storage
