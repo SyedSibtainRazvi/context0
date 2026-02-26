@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Context, Result};
 use rusqlite::Connection;
 use serde_json::{json, Map, Value};
-use std::io::{BufRead, BufReader, Read, Write};
+use std::io::{BufRead, BufReader, Write};
 
 use crate::checkpoint::{Checkpoint, CheckpointPayload};
 use crate::db;
@@ -63,48 +63,27 @@ pub fn run_mcp_server(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
-fn read_mcp_message<R: BufRead + Read>(reader: &mut R) -> Result<Option<Value>> {
-    let mut content_length: Option<usize> = None;
-    let mut saw_header = false;
-
+fn read_mcp_message<R: BufRead>(reader: &mut R) -> Result<Option<Value>> {
     loop {
         let mut line = String::new();
         let bytes = reader.read_line(&mut line)?;
         if bytes == 0 {
-            if saw_header {
-                return Err(anyhow!("unexpected EOF while reading MCP headers"));
-            }
             return Ok(None);
         }
-        saw_header = true;
-
-        if line == "\n" || line == "\r\n" {
-            break;
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            continue;
         }
-
-        let trimmed = line.trim_end_matches(['\r', '\n']);
-        if let Some((name, value)) = trimmed.split_once(':') {
-            if name.eq_ignore_ascii_case("Content-Length") {
-                content_length =
-                    Some(value.trim().parse::<usize>().with_context(|| {
-                        format!("invalid Content-Length header: {}", value.trim())
-                    })?);
-            }
-        }
+        let message: Value =
+            serde_json::from_str(trimmed).context("invalid MCP JSON payload")?;
+        return Ok(Some(message));
     }
-
-    let length = content_length.ok_or_else(|| anyhow!("missing Content-Length header"))?;
-    let mut payload = vec![0_u8; length];
-    reader.read_exact(&mut payload)?;
-
-    let message: Value = serde_json::from_slice(&payload).context("invalid MCP JSON payload")?;
-    Ok(Some(message))
 }
 
 fn write_mcp_message<W: Write>(writer: &mut W, payload: &Value) -> Result<()> {
     let body = serde_json::to_vec(payload)?;
-    write!(writer, "Content-Length: {}\r\n\r\n", body.len())?;
     writer.write_all(&body)?;
+    writer.write_all(b"\n")?;
     writer.flush()?;
     Ok(())
 }

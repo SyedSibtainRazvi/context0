@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-02-26
+
+- Fix MCP stdio transport: switch from Content-Length framing to newline-delimited JSON (NDJSON) — Claude Code 2.1+ sends raw JSON lines, not LSP-style headers
+
 ## [0.1.3] - 2026-02-26
 
 - Fix SQLite busy timeout — use `conn.busy_timeout()` with 30s default, configurable via `CONTEXT0_BUSY_TIMEOUT_MS`
