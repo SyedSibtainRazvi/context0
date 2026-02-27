@@ -2,7 +2,7 @@
 
 Save where you left off. Resume in any AI tool — context follows your git branch.
 
-**Free. No account. No cloud. Nothing to sign up for.**
+**Open Source** · **Free** · **No Signup** · **No Cloud** · **Local-only** · **MIT License**
 
 <img width="1470" height="802" alt="Screenshot 2026-02-25 at 2 12 27 AM" src="https://github.com/user-attachments/assets/cd17149f-3199-4b66-9f06-fc7f142a1138" />
 

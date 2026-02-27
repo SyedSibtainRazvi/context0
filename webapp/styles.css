@@ -208,6 +208,24 @@ h3 {
   font-size: 1.2rem;
 }
 
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.42rem;
+  border: 2px solid #4b63bb;
+  background: #eef3ff;
+  color: #1b2f78;
+  box-shadow: 2px 2px 0 rgba(29, 44, 97, 0.3);
+}
+
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
