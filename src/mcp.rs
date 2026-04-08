@@ -91,10 +91,8 @@ fn read_mcp_message<R: BufRead>(reader: &mut R) -> Result<Option<Value>> {
         }
 
         let mut body = vec![0_u8; content_length];
-        std::io::Read::read_exact(reader, &mut body)
-            .context("failed to read MCP message body")?;
-        let message: Value =
-            serde_json::from_slice(&body).context("invalid MCP JSON payload")?;
+        std::io::Read::read_exact(reader, &mut body).context("failed to read MCP message body")?;
+        let message: Value = serde_json::from_slice(&body).context("invalid MCP JSON payload")?;
         return Ok(Some(message));
     }
 }
