@@ -22,7 +22,13 @@ Works on macOS (Intel and Apple Silicon) and Linux (x86_64 and arm64).
 
 ## How it works (automatic with MCP)
 
-With MCP configured, you don't run any commands. Just say **"save context"** or **"I'm switching"** and the agent saves everything. On the next session — in any tool — the agent loads it automatically.
+With MCP configured, you do not manually run `context0 save` or `context0 resume`. Just talk to Claude Code, Cursor, or Codex normally — for example, say you're switching tools or ending the session — and the agent saves everything through MCP. On the next session, the agent loads it automatically.
+
+If you prefer, ask Claude or another coding agent to do the setup for you step by step. For example:
+
+```text
+Install context0 on this machine, run context0 init-rules in this project, set up MCP for Claude Code, and verify everything step by step.
+```
 
 **Step 1 — install:**
 
@@ -78,11 +84,11 @@ Add to `~/.codex/config.json` using the full path from `which context0`:
 }
 ```
 
-**That's it.** The agent handles everything from here. No commands to memorize.
+**That's it.** After MCP is configured, you can talk to the agent normally. You do not need to manually run `context0` commands inside Claude Code, Cursor, or Codex.
 
-## CLI (optional, no MCP required)
+## Manual CLI (optional, no MCP required)
 
-Prefer to do it manually, or don't want MCP setup? The CLI works standalone:
+Use these commands only if you want to work without MCP, or prefer to save/resume manually from the terminal:
 
 ```bash
 # Save a checkpoint
