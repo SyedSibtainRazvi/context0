@@ -39,7 +39,7 @@ Works on macOS (Intel and Apple Silicon) and Linux (x86_64 and arm64).
 
 ## How it works (automatic with MCP)
 
-With MCP configured, you do not manually run `context0 save` or `context0 resume`. Tell the agent you are switching tools or ending the session and it saves everything through MCP. On the next session, the agent loads the checkpoint automatically before you type a single message.
+With MCP configured, you do not manually run `context0 save` or `context0 resume`. Tell the agent you are switching tools or ending the session and it saves everything through MCP. On the next session, the agent is instructed to load the latest checkpoint for the current branch at session start.
 
 If you prefer, ask Claude or another coding agent to do the setup for you step by step. For example:
 
