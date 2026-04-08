@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Context, Result};
 use rusqlite::Connection;
 use serde_json::{json, Map, Value};
-use std::io::{BufRead, BufReader, Read, Write};
+use std::io::{BufRead, BufReader, Write};
 
 use crate::checkpoint::{Checkpoint, CheckpointPayload};
 use crate::db;
@@ -76,7 +76,6 @@ fn read_mcp_message<R: BufRead>(reader: &mut R) -> Result<Option<Value>> {
         }
 
         let content_length = parse_content_length(trimmed)?;
-        let mut saw_blank_line = false;
 
         loop {
             line.clear();
@@ -87,18 +86,12 @@ fn read_mcp_message<R: BufRead>(reader: &mut R) -> Result<Option<Value>> {
 
             let header = line.trim_end();
             if header.is_empty() {
-                saw_blank_line = true;
                 break;
             }
         }
 
-        if !saw_blank_line {
-            return Err(anyhow!("missing blank line after MCP headers"));
-        }
-
         let mut body = vec![0_u8; content_length];
-        reader
-            .read_exact(&mut body)
+        std::io::Read::read_exact(reader, &mut body)
             .context("failed to read MCP message body")?;
         let message: Value =
             serde_json::from_slice(&body).context("invalid MCP JSON payload")?;
