@@ -609,6 +609,11 @@ mod tests {
 
         let rendered = String::from_utf8(output).expect("utf8");
         assert!(rendered.starts_with("Content-Length: "));
-        assert!(rendered.contains("\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":1}"));
+        let (_, body) = rendered
+            .split_once("\r\n\r\n")
+            .expect("message should contain header/body separator");
+        let payload: Value = serde_json::from_str(body).expect("body should be valid json");
+        assert_eq!(payload["jsonrpc"], "2.0");
+        assert_eq!(payload["id"], 1);
     }
 }
