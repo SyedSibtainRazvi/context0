@@ -1,14 +1,31 @@
 # context0
 
-Save where you left off. Resume in any AI tool — context follows your git branch.
+Ephemeral branch-scoped handoff state for AI coding agents. Like `git stash`, but for your agent's working memory.
 
-**Open Source** · **Free** · **No Signup** · **No Cloud** · **Local-only** · **MIT License**
+**Open Source** · **Free** · **No Signup** · **No Cloud** · **MIT License**
 
-<img width="1470" height="802" alt="Screenshot 2026-02-25 at 2 12 27 AM" src="https://github.com/user-attachments/assets/cd17149f-3199-4b66-9f06-fc7f142a1138" />
+<img width="1470" height="802" alt="context0 in action. Checkpoint saved and resumed in Claude Code." src="https://github.com/user-attachments/assets/cd17149f-3199-4b66-9f06-fc7f142a1138" />
 
 ## Why
 
-AI coding sessions have no memory between tools. Tokens run out in Claude Code, you switch to Cursor, and you're back to re-explaining everything. `context0` fixes that — it saves a checkpoint scoped to your `git repo + branch` so any tool can resume right where you left off.
+Every new AI session starts cold. Switch tools, hit a token limit, come back the next day. The agent has no idea what you were doing. `context0` fixes that by saving a compact checkpoint scoped to your git repo and branch, so the next agent resumes exactly where you left off.
+
+It stores the useful handoff state:
+- what was done
+- what should happen next
+- blockers
+- test status
+- key files
+- commit SHA
+
+It does **not** try to be long-term project memory, static project rules, or full conversation replay. You get the state you need to resume work, without dragging along stale assumptions or session junk.
+
+## What context0 is and is not
+
+- `context0` is ephemeral session state for the current branch.
+- `context0` is not long-lived project memory like architecture notes or decision logs.
+- `context0` is not static instruction files like `CLAUDE.md` or `AGENTS.md`.
+- `context0` does not carry over your full chat history. It carries the structured handoff state needed to resume the task cleanly.
 
 ## Install
 
@@ -22,7 +39,7 @@ Works on macOS (Intel and Apple Silicon) and Linux (x86_64 and arm64).
 
 ## How it works (automatic with MCP)
 
-With MCP configured, you do not manually run `context0 save` or `context0 resume`. Just talk to Claude Code, Cursor, or Codex normally — for example, say you're switching tools or ending the session — and the agent saves everything through MCP. On the next session, the agent loads it automatically.
+With MCP configured, you do not manually run `context0 save` or `context0 resume`. Tell the agent you are switching tools or ending the session and it saves everything through MCP. On the next session, the agent loads the checkpoint automatically before you type a single message.
 
 If you prefer, ask Claude or another coding agent to do the setup for you step by step. For example:
 
@@ -30,21 +47,21 @@ If you prefer, ask Claude or another coding agent to do the setup for you step b
 Install context0 on this machine, run context0 init-rules in this project, set up MCP for Claude Code, and verify everything step by step.
 ```
 
-**Step 1 — install:**
+**Step 1. Install:**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/SyedSibtainRazvi/context0/main/install.sh | sh
 ```
 
-**Step 2 — install rule files** (once per project):
+**Step 2. Install rule files** (once per project):
 
 ```bash
 context0 init-rules
 ```
 
-This tells the AI agent when and how to save/resume context. Writes `CLAUDE.md`, `.cursor/rules/context0.mdc`, and `AGENTS.md` into your project.
+This writes agent instruction files (`CLAUDE.md`, `.cursor/rules/context0.mdc`, `AGENTS.md`) into your project. They tell the agent when to save and load context automatically. No manual prompting needed.
 
-**Step 3 — configure MCP** for your tool:
+**Step 3. Configure MCP for your tool:**
 
 ### Claude Code
 
@@ -54,7 +71,7 @@ claude mcp add context0 context0 mcp-server
 
 ### Cursor
 
-Cursor doesn't inherit your shell PATH — use the full binary path. Find it with `which context0`, then add to `~/.cursor/mcp.json`:
+Cursor does not inherit your shell PATH, so use the full binary path. Find it with `which context0`, then add to `~/.cursor/mcp.json`:
 
 ```json
 {
@@ -88,7 +105,7 @@ Add to `~/.codex/config.json` using the full path from `which context0`:
 
 ## Manual CLI (optional, no MCP required)
 
-Use these commands only if you want to work without MCP, or prefer to save/resume manually from the terminal:
+Use these commands only if you want to work without MCP, or prefer to save and resume manually from the terminal:
 
 ```bash
 # Save a checkpoint
@@ -116,9 +133,9 @@ context0 clear
 
 ## How context is scoped
 
-- Key is `git repo root + branch` — `feature/auth` and `main` stay completely separate
-- Stored in local SQLite at `~/.context0/context0.db` — nothing leaves your machine
-- No cloud, no auth, no runtime dependencies
+- Key is `git repo root + branch`. `feature/auth` and `main` stay completely separate.
+- Stored in local SQLite at `~/.context0/context0.db`. Nothing leaves your machine.
+- No cloud, no auth, no runtime dependencies.
 
 ## Storage
 

@@ -3,20 +3,6 @@ import { useEffect, useState } from 'react';
 const copyBlocks = {
   install: 'curl -fsSL https://raw.githubusercontent.com/SyedSibtainRazvi/context0/main/install.sh | sh',
   initRules: 'context0 init-rules',
-  mcpQuickConfig: `# Claude Code (run once in terminal)
-claude mcp add context0 context0 mcp-server
-
-# Cursor / Codex — use full path (editors don't inherit PATH)
-# First run: which context0
-# Then add to ~/.cursor/mcp.json or ~/.codex/config.json:
-{
-  "mcpServers": {
-    "context0": {
-      "command": "/Users/your-username/.local/bin/context0",
-      "args": ["mcp-server"]
-    }
-  }
-}`,
   save: 'context0 save --done "wired auth middleware" --next "fix integration tests"',
   claudeConfig: 'claude mcp add context0 context0 mcp-server',
   cursorConfig: `{
@@ -38,24 +24,29 @@ claude mcp add context0 context0 mcp-server
 };
 
 function CopyButton({ text }) {
-  const [label, setLabel] = useState('Copy');
+  const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(text);
-      setLabel('Copied');
+      setCopied(true);
     } catch {
-      setLabel('Failed');
+      // ignore
     }
 
     window.setTimeout(() => {
-      setLabel('Copy');
+      setCopied(false);
     }, 1100);
   }
 
   return (
-    <button className="copy-btn" onClick={handleCopy} type="button">
-      {label}
+    <button
+      className="copy-btn"
+      data-copied={copied || undefined}
+      onClick={handleCopy}
+      type="button"
+    >
+      {copied ? 'Copied' : 'Copy'}
     </button>
   );
 }
@@ -130,9 +121,6 @@ export default function App() {
 
   return (
     <>
-      <div className="bg-orb bg-orb-a"></div>
-      <div className="bg-orb bg-orb-b"></div>
-
       <header className="topbar">
         <a className="brand" href="#top">
           <span className="brand-mark">C</span>
@@ -163,18 +151,16 @@ export default function App() {
 
       <main id="top">
         <section className="hero reveal">
-          <p className="kicker">git-scoped session state</p>
-          <h1>Your AI context follows your git branch.</h1>
+          <p className="kicker">context handoff for AI coding agents</p>
+          <h1>Your AI agent picks up exactly where it left off.</h1>
           <p className="lead">
-            Save where you left off. Resume in any AI tool — Claude Code, Cursor, Codex — on the
-            same repo and branch, automatically.
+            Every new AI session starts cold. context0 fixes that.
           </p>
-          <p className="hint">
-            After one-time MCP setup, just talk to your agent normally. You do not need to
-            manually run <code>context0 save</code> or <code>context0 resume</code>.
+          <p className="tagline-pun">
+            Like <code>git stash</code>, but for your agent&apos;s working memory.
           </p>
           <div className="hero-tags">
-            {['Open Source', 'Free', 'No Signup', 'No Cloud', 'Local-only', 'MIT License'].map(
+            {['Open Source', 'Free', 'No Signup', 'No Cloud', 'MIT License'].map(
               (tag) => (
                 <span className="tag" key={tag}>
                   {tag}
@@ -201,32 +187,57 @@ export default function App() {
         </section>
 
         <section className="panel reveal" id="what">
-          <h2>What is context0?</h2>
+          <h2>How it works</h2>
           <p>
-            AI coding sessions have no memory between tools. <code>context0</code> stores compact
-            checkpoints in local SQLite, scoped to your git repo and branch. With MCP configured,
-            the agent saves and resumes automatically — no commands to run, nothing to learn.
+            Run <code>context0 init-rules</code> once per project and configure MCP for your
+            editor. That&apos;s the whole setup. After that:
           </p>
+          <ul className="how-list">
+            <li>
+              When you start a session, the agent silently calls <code>get_context</code> and reads
+              your checkpoint, before you type a single message.
+            </li>
+            <li>
+              When you say &ldquo;I&rsquo;m switching to Cursor&rdquo; or &ldquo;save my
+              session&rdquo;, the agent calls <code>save_context</code> with a structured summary:
+              what&apos;s done, what&apos;s next, blockers, test status, and key files.
+            </li>
+            <li>
+              Open the same branch in another tool. It loads the same checkpoint and resumes from
+              there.
+            </li>
+          </ul>
+          <video
+            autoPlay
+            className="demo-screenshot"
+            loop
+            muted
+            playsInline
+          >
+            <source src="/context0.mp4" type="video/mp4" />
+          </video>
           <div className="grid three">
             <article>
-              <h3>Automatic</h3>
+              <h3>Not long-term memory</h3>
               <p>
-                Talk to Claude Code, Cursor, or Codex normally. If you say you&apos;re switching
-                tools or ending the session, the agent handles save/resume through MCP.
+                context0 is not a knowledge base or conversation log. It is a short-lived handoff
+                note, the minimum state needed to resume a task cleanly in a fresh agent session.
               </p>
             </article>
             <article>
-              <h3>Local</h3>
+              <h3>Not static rules</h3>
               <p>
-                No cloud, no account, no signup. Data stays on your machine at{' '}
-                <code>~/.context0/context0.db</code>.
+                It is not <code>CLAUDE.md</code> or <code>AGENTS.md</code>. Those are permanent
+                project instructions. context0 is ephemeral, scoped to the current branch and
+                replaced every time you save.
               </p>
             </article>
             <article>
-              <h3>Scoped</h3>
+              <h3>Local only, no cloud</h3>
               <p>
-                Context key is <code>repo_root + branch</code> — each branch stays completely
-                isolated.
+                Checkpoints are stored in SQLite at <code>~/.context0/context0.db</code>.{' '}
+                <code>feature/auth</code> and <code>main</code> stay completely separate. Nothing
+                leaves your machine.
               </p>
             </article>
           </div>
@@ -234,11 +245,9 @@ export default function App() {
 
         <section className="panel reveal" id="quickstart">
           <h2>Quickstart</h2>
-          <h3>With MCP — recommended</h3>
           <p>
-            Set it up once. After that, talk to the agent normally — no need to manually run{' '}
-            <code>context0 save</code> or <code>context0 resume</code>. The agent handles
-            everything through MCP.
+            Three steps, done once. After that, the agent handles everything automatically through
+            MCP. No manual <code>context0</code> commands needed.
           </p>
           <ol className="steps">
             <li>
@@ -255,15 +264,17 @@ export default function App() {
               <strong>Install rule files</strong> (once per project)
               <CodeWrap text={copyBlocks.initRules} />
               <p className="hint">
-                Writes <code>CLAUDE.md</code>, <code>.cursor/rules/context0.mdc</code>, and{' '}
-                <code>AGENTS.md</code> into the current project.
+                Writes agent instruction files (<code>CLAUDE.md</code>,{' '}
+                <code>.cursor/rules/context0.mdc</code>, <code>AGENTS.md</code>) that tell the
+                agent to automatically load your checkpoint on session start and save it when you
+                switch tools. No manual prompting needed.
               </p>
             </li>
             <li>
               <strong>Add MCP config</strong> to your tool
-              <CodeWrap text={copyBlocks.mcpQuickConfig} />
-              <p className="hint">
-                See the <a href="#mcp">MCP setup</a> section below for per-tool details.
+              <p className="hint" style={{ marginTop: '0.4rem' }}>
+                See the <a href="#mcp">MCP setup</a> section below. Pick your tool, Claude Code,
+                Cursor, or Codex, and copy the one-liner or JSON snippet.
               </p>
             </li>
           </ol>
@@ -272,9 +283,8 @@ export default function App() {
         <section className="panel reveal" id="mcp">
           <h2>MCP setup</h2>
           <p>
-            Add <code>context0 mcp-server</code> to your editor&apos;s MCP config. The agent then
-            calls <code>get_context</code>, <code>save_context</code>, and{' '}
-            <code>list_context</code> automatically.
+            Add <code>context0 mcp-server</code> to your editor&apos;s MCP config. After that, the
+            agent can save and load progress automatically.
           </p>
 
           <div aria-label="MCP Config Tabs" className="tab-controls" role="tablist">
@@ -308,7 +318,7 @@ export default function App() {
             <CodeWrap text={copyBlocks.cursorConfig} />
             <p className="hint">
               File: <code>~/.cursor/mcp.json</code> (global) or <code>.cursor/mcp.json</code>{' '}
-              (project). Cursor doesn&apos;t inherit your shell PATH — use the full binary path.
+              (project). Cursor does not inherit your shell PATH, so use the full binary path.
               Run <code>which context0</code> to find yours, then restart Cursor.
             </p>
           </div>
@@ -316,7 +326,7 @@ export default function App() {
           <div className={`tab-panel${activeTab === 'codex' ? ' active' : ''}`}>
             <CodeWrap text={copyBlocks.codexConfig} />
             <p className="hint">
-              File: <code>~/.codex/config.json</code> &nbsp;&middot;&nbsp; Use the full path from{' '}
+              File: <code>~/.codex/config.json</code>. Use the full path from{' '}
               <code>which context0</code>.
             </p>
           </div>
@@ -325,8 +335,8 @@ export default function App() {
         <section className="panel reveal" id="manual">
           <h2>Manual Fallback</h2>
           <p>
-            Prefer not to use MCP? You can still save and resume manually from a terminal, but
-            that is the fallback path, not the recommended one.
+            Prefer not to use MCP? You can still save and resume from a terminal. That is the
+            fallback path, not the main workflow.
           </p>
           <CodeWrap text={copyBlocks.save} />
           <p className="hint">
@@ -337,7 +347,16 @@ export default function App() {
       </main>
 
       <footer className="site-footer reveal">
-        <p>Open source &middot; MIT License &middot; No account required</p>
+        <p>
+          Open source. MIT License. No account required.{' '}
+          <a
+            href="https://github.com/SyedSibtainRazvi/context0"
+            rel="noopener"
+            target="_blank"
+          >
+            Star on GitHub
+          </a>
+        </p>
       </footer>
     </>
   );

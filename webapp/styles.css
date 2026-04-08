@@ -11,6 +11,9 @@
   --code-ink: #8df7ff;
   --code-line: #214164;
   --shadow: 6px 6px 0 var(--frame);
+  --font-body: "Geist", "Segoe UI", sans-serif;
+  --font-display: "Geist Mono", "SFMono-Regular", "SF Mono", "Consolas", "Liberation Mono", monospace;
+  --font-mono: "Geist Mono", "SFMono-Regular", "SF Mono", "Consolas", "Liberation Mono", monospace;
 }
 
 * {
@@ -31,10 +34,10 @@ html {
 body {
   min-height: 100vh;
   color: var(--ink);
-  font-family: "VT323", "Courier New", monospace;
-  font-size: 1.32rem;
-  line-height: 1.35;
-  letter-spacing: 0.02em;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  letter-spacing: 0;
   background:
     radial-gradient(circle at 12% 8%, rgba(236, 245, 255, 0.95) 0, rgba(236, 245, 255, 0) 28%),
     radial-gradient(circle at 86% 82%, rgba(121, 159, 255, 0.32) 0, rgba(121, 159, 255, 0) 25%),
@@ -55,29 +58,6 @@ body::before {
   z-index: 0;
 }
 
-.bg-orb {
-  position: fixed;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bg-orb-a {
-  width: 420px;
-  height: 420px;
-  top: -150px;
-  right: -110px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 111, 58, 0.23), rgba(255, 111, 58, 0));
-}
-
-.bg-orb-b {
-  width: 360px;
-  height: 360px;
-  left: -80px;
-  bottom: -120px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(31, 165, 160, 0.24), rgba(31, 165, 160, 0));
-}
 
 .topbar {
   position: sticky;
@@ -98,8 +78,9 @@ body::before {
   gap: 0.62rem;
   color: var(--ink);
   text-decoration: none;
-  font-family: "Press Start 2P", monospace;
-  font-size: 0.68rem;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .brand-mark {
@@ -123,8 +104,9 @@ body::before {
 .topnav a {
   color: var(--ink);
   text-decoration: none;
-  font-family: "Press Start 2P", monospace;
-  font-size: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
   background: #f3f6ff;
   border: 2px solid #4b63bb;
   box-shadow: 2px 2px 0 #4b63bb;
@@ -143,8 +125,9 @@ body::before {
   border: 2px solid #4b63bb;
   background: #f3f6ff;
   color: var(--ink);
-  font-family: "Press Start 2P", monospace;
-  font-size: 0.52rem;
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 600;
   padding: 0.45rem 0.6rem;
   box-shadow: 2px 2px 0 #4b63bb;
 }
@@ -174,7 +157,10 @@ main {
   color: #0f5f5b;
   background: #c2f4ed;
   font-family: "Press Start 2P", monospace;
-  font-size: 0.5rem;
+  font-size: 0.52rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 h1,
@@ -182,30 +168,43 @@ h2,
 h3 {
   margin-top: 0;
   line-height: 1.35;
-  font-family: "Press Start 2P", monospace;
-  text-transform: uppercase;
+  font-family: var(--font-display);
 }
 
 h1 {
   margin: 0.85rem 0 1rem;
-  font-size: clamp(1.05rem, 2.7vw, 1.7rem);
-  max-width: 24ch;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  max-width: 14ch;
+  letter-spacing: -0.04em;
+  text-shadow: 0 0 18px rgba(77, 115, 221, 0.35), 0 0 40px rgba(77, 115, 221, 0.12);
 }
 
 h2 {
-  font-size: clamp(0.75rem, 1.7vw, 1rem);
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
   margin-bottom: 0.9rem;
+  letter-spacing: -0.03em;
 }
 
 h3 {
-  font-size: clamp(0.58rem, 1.3vw, 0.72rem);
+  font-size: clamp(0.95rem, 1.6vw, 1.08rem);
   margin-bottom: 0.65rem;
+  letter-spacing: -0.02em;
 }
 
 .lead {
   max-width: 60ch;
   color: #1f2854;
-  font-size: 1.2rem;
+  font-size: 1.22rem;
+  line-height: 1.7;
+}
+
+.tagline-pun {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--frame);
+  letter-spacing: -0.01em;
 }
 
 .hero-tags {
@@ -218,8 +217,9 @@ h3 {
 .tag {
   display: inline-block;
   padding: 0.25rem 0.5rem;
-  font-family: "Press Start 2P", monospace;
-  font-size: 0.42rem;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
   border: 2px solid #4b63bb;
   background: #eef3ff;
   color: #1b2f78;
@@ -238,8 +238,9 @@ h3 {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  font-family: "Press Start 2P", monospace;
-  font-size: 0.56rem;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
   padding: 0.6rem 0.8rem;
   border: 2px solid #17235a;
   box-shadow: 3px 3px 0 #17235a;
@@ -268,6 +269,14 @@ h3 {
   margin-top: 1rem;
 }
 
+.demo-screenshot {
+  display: block;
+  width: 100%;
+  border: 3px solid var(--frame);
+  box-shadow: var(--shadow);
+  margin-bottom: 1rem;
+}
+
 .grid {
   display: grid;
   gap: 0.9rem;
@@ -286,6 +295,18 @@ h3 {
   background: #f8faff;
   padding: 0.7rem;
   box-shadow: 3px 3px 0 rgba(29, 44, 97, 0.4);
+}
+
+.how-list {
+  margin: 0.75rem 0 1rem;
+  padding-left: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.how-list li {
+  line-height: 1.6;
 }
 
 .steps {
@@ -361,7 +382,7 @@ p code {
   z-index: 1;
 }
 
-.copy-btn[data-copied="true"] {
+.copy-btn[data-copied] {
   background: #ffd089;
   border-color: #a75f18;
   box-shadow: 2px 2px 0 #a75f18;
@@ -397,24 +418,6 @@ p code {
 
 .tab-panel.active {
   display: block;
-}
-
-#commands .grid {
-  display: block;
-  column-count: 2;
-  column-gap: 0.9rem;
-}
-
-#commands .grid article {
-  display: inline-block;
-  width: 100%;
-  margin: 0 0 0.9rem;
-  break-inside: avoid;
-}
-
-#commands .grid article p {
-  margin-top: 0;
-  margin-bottom: 0.7rem;
 }
 
 .hint {
@@ -522,16 +525,16 @@ p code {
   }
 
   h1 {
-    font-size: clamp(0.9rem, 4vw, 1.2rem);
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
     max-width: 100%;
   }
 
   h2 {
-    font-size: clamp(0.68rem, 3vw, 0.85rem);
+    font-size: clamp(1.05rem, 3.5vw, 1.25rem);
   }
 
   h3 {
-    font-size: 0.6rem;
+    font-size: clamp(0.85rem, 2.5vw, 0.95rem);
   }
 
   .hero {
@@ -539,7 +542,7 @@ p code {
   }
 
   .kicker {
-    font-size: 0.42rem;
+    font-size: 0.38rem;
   }
 
   .lead {
@@ -580,11 +583,6 @@ p code {
     overflow-x: auto;
   }
 
-  #storage pre,
-  #storage code {
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
 }
 
 @media (max-width: 380px) {
@@ -627,4 +625,7 @@ p code {
     opacity: 1;
     transform: none;
   }
+}
+.code-wrap button {
+  font-family: var(--font-mono);
 }
