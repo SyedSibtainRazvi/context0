@@ -180,9 +180,9 @@ fn init_rules() -> Result<()> {
     // Claude Code — append to CLAUDE.md at project root
     write_rule_append(Path::new("CLAUDE.md"), CLAUDE_RULE, "Claude Code")?;
 
-    // Cursor — dedicated file, always write
+    // Cursor — dedicated file, install once and preserve user edits on rerun
     fs::create_dir_all(".cursor/rules")?;
-    write_rule_overwrite(
+    write_rule_append(
         Path::new(".cursor/rules/context0.mdc"),
         CURSOR_RULE,
         "Cursor",
@@ -214,12 +214,6 @@ fn write_rule_append(path: &Path, content: &str, tool: &str) -> Result<()> {
         fs::write(path, content)?;
         println!("  created   {} ({})", path.display(), tool);
     }
-    Ok(())
-}
-
-fn write_rule_overwrite(path: &Path, content: &str, tool: &str) -> Result<()> {
-    fs::write(path, content)?;
-    println!("  created   {} ({})", path.display(), tool);
     Ok(())
 }
 

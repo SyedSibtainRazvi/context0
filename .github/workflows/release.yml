@@ -19,6 +19,9 @@ jobs:
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
             ext: tar.gz
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-24.04-arm
+            ext: tar.gz
           - target: x86_64-apple-darwin
             os: macos-latest
             ext: tar.gz
@@ -39,7 +42,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Install musl tools
-        if: matrix.target == 'x86_64-unknown-linux-musl'
+        if: matrix.target == 'x86_64-unknown-linux-musl' || matrix.target == 'aarch64-unknown-linux-musl'
         run: sudo apt-get install -y musl-tools
 
       - name: Build

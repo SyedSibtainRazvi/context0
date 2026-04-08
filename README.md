@@ -16,7 +16,7 @@ AI coding sessions have no memory between tools. Tokens run out in Claude Code, 
 curl -fsSL https://raw.githubusercontent.com/SyedSibtainRazvi/context0/main/install.sh | sh
 ```
 
-Works on macOS (Intel and Apple Silicon) and Linux x86_64.
+Works on macOS (Intel and Apple Silicon) and Linux (x86_64 and arm64).
 
 **Windows:** download the `.zip` from [Releases](https://github.com/SyedSibtainRazvi/context0/releases) and add the binary to your PATH.
 

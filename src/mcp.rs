@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Context, Result};
 use rusqlite::Connection;
 use serde_json::{json, Map, Value};
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader, Read, Write};
 
 use crate::checkpoint::{Checkpoint, CheckpointPayload};
 use crate::db;
@@ -70,21 +70,64 @@ fn read_mcp_message<R: BufRead>(reader: &mut R) -> Result<Option<Value>> {
         if bytes == 0 {
             return Ok(None);
         }
-        let trimmed = line.trim();
+        let trimmed = line.trim_end();
         if trimmed.is_empty() {
             continue;
         }
-        let message: Value = serde_json::from_str(trimmed).context("invalid MCP JSON payload")?;
+
+        let content_length = parse_content_length(trimmed)?;
+        let mut saw_blank_line = false;
+
+        loop {
+            line.clear();
+            let bytes = reader.read_line(&mut line)?;
+            if bytes == 0 {
+                return Err(anyhow!("unexpected EOF while reading MCP headers"));
+            }
+
+            let header = line.trim_end();
+            if header.is_empty() {
+                saw_blank_line = true;
+                break;
+            }
+        }
+
+        if !saw_blank_line {
+            return Err(anyhow!("missing blank line after MCP headers"));
+        }
+
+        let mut body = vec![0_u8; content_length];
+        reader
+            .read_exact(&mut body)
+            .context("failed to read MCP message body")?;
+        let message: Value =
+            serde_json::from_slice(&body).context("invalid MCP JSON payload")?;
         return Ok(Some(message));
     }
 }
 
 fn write_mcp_message<W: Write>(writer: &mut W, payload: &Value) -> Result<()> {
     let body = serde_json::to_vec(payload)?;
+    write!(writer, "Content-Length: {}\r\n\r\n", body.len())?;
     writer.write_all(&body)?;
-    writer.write_all(b"\n")?;
     writer.flush()?;
     Ok(())
+}
+
+fn parse_content_length(header_line: &str) -> Result<usize> {
+    let (name, value) = header_line
+        .split_once(':')
+        .ok_or_else(|| anyhow!("invalid MCP header line: {header_line}"))?;
+    if !name.eq_ignore_ascii_case("Content-Length") {
+        return Err(anyhow!(
+            "expected Content-Length header, got: {header_line}"
+        ));
+    }
+
+    value
+        .trim()
+        .parse::<usize>()
+        .context("invalid Content-Length header value")
 }
 
 fn handle_mcp_message(conn: &Connection, message: Value) -> Result<Option<Value>> {
@@ -443,6 +486,7 @@ fn mcp_tools() -> Value {
 mod tests {
     use super::*;
     use serde_json::json;
+    use std::io::Cursor;
     use std::sync::atomic::{AtomicU64, Ordering};
 
     static TEST_COUNTER: AtomicU64 = AtomicU64::new(0);
@@ -550,5 +594,30 @@ mod tests {
             .expect("items should be an array");
         assert_eq!(items.len(), 1);
         assert_eq!(items[0]["done_text"], "wired MCP");
+    }
+
+    #[test]
+    fn read_mcp_message_parses_content_length_framing() {
+        let raw = b"Content-Length: 24\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":1}\r\n";
+        let mut reader = Cursor::new(raw);
+
+        let message = read_mcp_message(&mut reader)
+            .expect("framed message should parse")
+            .expect("message should exist");
+
+        assert_eq!(message["jsonrpc"], "2.0");
+        assert_eq!(message["id"], 1);
+    }
+
+    #[test]
+    fn write_mcp_message_emits_content_length_framing() {
+        let mut output = Vec::new();
+
+        write_mcp_message(&mut output, &json!({"jsonrpc":"2.0","id":1}))
+            .expect("write should succeed");
+
+        let rendered = String::from_utf8(output).expect("utf8");
+        assert!(rendered.starts_with("Content-Length: "));
+        assert!(rendered.contains("\r\n\r\n{\"jsonrpc\":\"2.0\",\"id\":1}"));
     }
 }
