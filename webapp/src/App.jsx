@@ -194,8 +194,8 @@ export default function App() {
           </p>
           <ul className="how-list">
             <li>
-              When you start a session, the agent silently calls <code>get_context</code> and reads
-              your checkpoint, before you type a single message.
+              When you start a session, the agent is instructed to call <code>get_context</code>{' '}
+              and read the latest checkpoint for the current branch.
             </li>
             <li>
               When you say &ldquo;I&rsquo;m switching to Cursor&rdquo; or &ldquo;save my
@@ -213,6 +213,8 @@ export default function App() {
             loop
             muted
             playsInline
+            poster="https://github.com/user-attachments/assets/cd17149f-3199-4b66-9f06-fc7f142a1138"
+            preload="none"
           >
             <source src="/context0.mp4" type="video/mp4" />
           </video>
@@ -228,8 +230,8 @@ export default function App() {
               <h3>Not static rules</h3>
               <p>
                 It is not <code>CLAUDE.md</code> or <code>AGENTS.md</code>. Those are permanent
-                project instructions. context0 is ephemeral, scoped to the current branch and
-                replaced every time you save.
+                project instructions. context0 is ephemeral, scoped to the current branch. Each
+                save appends a new checkpoint; resume always reads the latest one.
               </p>
             </article>
             <article>

@@ -11,9 +11,9 @@
   --code-ink: #8df7ff;
   --code-line: #214164;
   --shadow: 6px 6px 0 var(--frame);
-  --font-body: "Geist", "Segoe UI", sans-serif;
-  --font-display: "Geist Mono", "SFMono-Regular", "SF Mono", "Consolas", "Liberation Mono", monospace;
-  --font-mono: "Geist Mono", "SFMono-Regular", "SF Mono", "Consolas", "Liberation Mono", monospace;
+  --font-body: "VT323", "Courier New", monospace;
+  --font-display: "Press Start 2P", monospace;
+  --font-mono: "VT323", "Courier New", monospace;
 }
 
 * {
@@ -35,9 +35,9 @@ body {
   min-height: 100vh;
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 1.05rem;
-  line-height: 1.6;
-  letter-spacing: 0;
+  font-size: 1.32rem;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
   background:
     radial-gradient(circle at 12% 8%, rgba(236, 245, 255, 0.95) 0, rgba(236, 245, 255, 0) 28%),
     radial-gradient(circle at 86% 82%, rgba(121, 159, 255, 0.32) 0, rgba(121, 159, 255, 0) 25%),
@@ -79,8 +79,7 @@ body::before {
   color: var(--ink);
   text-decoration: none;
   font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.68rem;
 }
 
 .brand-mark {
@@ -105,8 +104,7 @@ body::before {
   color: var(--ink);
   text-decoration: none;
   font-family: var(--font-display);
-  font-size: 0.76rem;
-  font-weight: 600;
+  font-size: 0.55rem;
   background: #f3f6ff;
   border: 2px solid #4b63bb;
   box-shadow: 2px 2px 0 #4b63bb;
@@ -126,8 +124,7 @@ body::before {
   background: #f3f6ff;
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 0.74rem;
-  font-weight: 600;
+  font-size: 0.52rem;
   padding: 0.45rem 0.6rem;
   box-shadow: 2px 2px 0 #4b63bb;
 }
@@ -156,11 +153,8 @@ main {
   border: 2px solid var(--frame);
   color: #0f5f5b;
   background: #c2f4ed;
-  font-family: "Press Start 2P", monospace;
-  font-size: 0.52rem;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-size: 0.5rem;
 }
 
 h1,
@@ -173,38 +167,37 @@ h3 {
 
 h1 {
   margin: 0.85rem 0 1rem;
-  font-size: clamp(2rem, 5vw, 3.6rem);
-  max-width: 14ch;
-  letter-spacing: -0.04em;
+  font-size: clamp(1.05rem, 2.7vw, 1.7rem);
+  max-width: 24ch;
+  letter-spacing: 0;
   text-shadow: 0 0 18px rgba(77, 115, 221, 0.35), 0 0 40px rgba(77, 115, 221, 0.12);
 }
 
 h2 {
-  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  font-size: clamp(0.75rem, 1.7vw, 1rem);
   margin-bottom: 0.9rem;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
 }
 
 h3 {
-  font-size: clamp(0.95rem, 1.6vw, 1.08rem);
+  font-size: clamp(0.58rem, 1.3vw, 0.72rem);
   margin-bottom: 0.65rem;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .lead {
   max-width: 60ch;
   color: #1f2854;
-  font-size: 1.22rem;
-  line-height: 1.7;
+  font-size: 1.2rem;
+  line-height: 1.35;
 }
 
 .tagline-pun {
   margin: 0.9rem 0 0;
   font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.56rem;
   color: var(--frame);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .hero-tags {
@@ -218,8 +211,7 @@ h3 {
   display: inline-block;
   padding: 0.25rem 0.5rem;
   font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 600;
+  font-size: 0.42rem;
   border: 2px solid #4b63bb;
   background: #eef3ff;
   color: #1b2f78;
@@ -239,8 +231,7 @@ h3 {
   justify-content: center;
   text-decoration: none;
   font-family: var(--font-display);
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.56rem;
   padding: 0.6rem 0.8rem;
   border: 2px solid #17235a;
   box-shadow: 3px 3px 0 #17235a;
@@ -306,7 +297,7 @@ h3 {
 }
 
 .how-list li {
-  line-height: 1.6;
+  line-height: 1.35;
 }
 
 .steps {
@@ -525,16 +516,16 @@ p code {
   }
 
   h1 {
-    font-size: clamp(1.6rem, 7vw, 2.2rem);
+    font-size: clamp(0.9rem, 4vw, 1.2rem);
     max-width: 100%;
   }
 
   h2 {
-    font-size: clamp(1.05rem, 3.5vw, 1.25rem);
+    font-size: clamp(0.68rem, 3vw, 0.85rem);
   }
 
   h3 {
-    font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+    font-size: 0.6rem;
   }
 
   .hero {
@@ -542,7 +533,7 @@ p code {
   }
 
   .kicker {
-    font-size: 0.38rem;
+    font-size: 0.42rem;
   }
 
   .lead {
