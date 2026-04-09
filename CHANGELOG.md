@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+- Refactor MCP message reading: simplify framing logic, remove unnecessary line breaks
+- Improve font styles and text readability across the landing page
+- Clarify MCP checkpoint loading process in README
+- Add React/Vite landing page with Vercel deployment
+- Add aarch64 architecture support in release workflow and install script
+- Enhanced MCP message tests to validate JSON payload structure
+- Remove dead GitHub Pages workflow (site now on Vercel)
+
 ## [0.1.6] - 2026-02-27
 
 - Fix CI test: detect default branch dynamically instead of hardcoding `main` — works on runners where `git init` defaults to `master`
