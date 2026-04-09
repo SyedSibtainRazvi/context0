@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-04-09
+
 - Refactor MCP message reading: simplify framing logic, remove unnecessary line breaks
 - Improve font styles and text readability across the landing page
 - Clarify MCP checkpoint loading process in README
